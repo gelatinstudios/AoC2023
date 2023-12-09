@@ -26,3 +26,4 @@ I'll still stick to the arbitrary goal of making sure my part 2 version still pr
 | 6      | Python                                            |
 | 7      | Haskell                                           |
 | 8      | Odin                                              |
+| 9      | Haskell                                           |
