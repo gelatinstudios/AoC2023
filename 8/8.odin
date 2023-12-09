@@ -37,24 +37,47 @@ next_key :: proc(network: Network, key: string, instruction: rune) -> string {
 Nothing :: struct{}
 String_Set :: map[string]Nothing
 
-count_steps: : proc(network: Network, instructions: string, keys: []string, end_keys: String_Set) -> int {
-    steps := 0
-    at_end := false
-    step_loop: for {
-        for instruction in instructions {
-            fmt.println(keys)
-            if at_end do break step_loop
-
-            at_end = true
-            for &key in keys {
+count_steps: : proc(network: Network, instructions: string, keys: []string, end_keys: String_Set) -> i64 {
+    step_counts := make([]i64, len(keys))
+    for key, i in keys {
+        key := key
+        step_count: i64 = 0
+        at_end := false
+        step_loop: for {
+            for instruction in instructions {
+                if at_end do break step_loop
+                at_end = true
                 key = next_key(network, key, instruction)
                 if at_end && key not_in end_keys do at_end = false
+                step_count += 1
             }
-            steps += 1
         }
+        step_counts[i] = step_count
     }
 
-    return steps
+    // ported from C version here: https://rosettacode.org/wiki/Least_common_multiple
+    gcd :: proc(m, n: i64) -> i64 {
+        m := m
+        n := n
+        tmp: i64
+        for m != 0 {
+            tmp = m
+            m = n % m
+            n = tmp
+        }
+        return n
+    }
+
+    lcm :: proc(m, n: i64) -> i64 {
+        return m / gcd(m, n) * n
+    }
+
+    result: i64 = 1
+    for step_count in step_counts {
+        result = lcm(result, step_count)
+    }
+    
+    return result
 }
 
 main :: proc() {
@@ -70,7 +93,7 @@ main :: proc() {
         network[key] = Node{left, right}
     }
 
-    //fmt.println(count_steps(network, instructions, []string{"AAA"}, String_Set{"ZZZ"={}}))
+    fmt.println(count_steps(network, instructions, []string{"AAA"}, String_Set{"ZZZ"={}}))
     
     part2_end: String_Set
     for key in network {
