@@ -11,3 +11,4 @@ Doing them in whatever language I feel like this year, rather than just C.
 | 4      | Haskell (depends on package `split`)              |
 | 5      | Python                                            |
 | 6      | Python                                            |
+| 7      | Haskell                                           |
